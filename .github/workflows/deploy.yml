@@ -1,0 +1,57 @@
+name: Fullstack App Deployment (Local Runner)
+
+on:
+  push:
+    branches:
+      - deploy
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Python Dependencies
+        working-directory: ./backend
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Lint Backend with Flake8
+        working-directory: ./backend
+        run: |
+          source venv/bin/activate
+          pip install flake8
+          flake8 . || true
+
+      - name: Install Node Dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Lint Frontend with ESLint
+        working-directory: ./frontend
+        run: |
+          npm install eslint
+          npx eslint . || true
+
+      - name: Build Frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Restart Backend and Deploy Frontend
+        run: |
+          sudo systemctl restart gunicorn
+          sudo systemctl reload nginx
