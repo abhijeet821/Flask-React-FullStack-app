@@ -51,15 +51,21 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Restart Backend and Deploy Frontend
+      - name: Restart Backend and Deploy Frontend Safely
         run: |
-          echo "Restarting Gunicorn..."
-          sudo systemctl restart gunicorn --no-block
+          echo "Stopping Gunicorn..."
+          sudo systemctl stop gunicorn
 
-          echo "Waiting for Gunicorn to start..."
+          echo "Waiting 5 seconds to ensure it's stopped..."
           sleep 5
 
-          echo "Checking Gunicorn status..."
+          echo "Starting Gunicorn..."
+          sudo systemctl start gunicorn
+      
+          echo "Waiting 5 seconds for Gunicorn to boot up..."
+          sleep 5
+
+          echo "Checking Gunicorn health..."
           sudo systemctl is-active --quiet gunicorn || (echo "Gunicorn failed to start!" && exit 1)
 
           echo "Reloading Nginx..."
