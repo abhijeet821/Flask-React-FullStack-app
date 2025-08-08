@@ -11,3 +11,10 @@ frontend/dist/
 
 .env
 .DS_Store
+
+action-runner/
+
+
+actions-runner/
+
+actions-runner/
