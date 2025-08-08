@@ -70,5 +70,5 @@ jobs:
 
           echo "Reloading Nginx..."
           sudo systemctl reload nginx
-        timeout-minutes: 3
+        timeout-minutes: 2
 
