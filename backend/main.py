@@ -3,14 +3,14 @@ from config import app, db
 from models import Contact
 
 
-@app.route("/contacts", methods=["GET"])
+@app.route("/api/contacts", methods=["GET"])
 def get_contacts():
     contacts = Contact.query.all()
     json_contacts = list(map(lambda x: x.to_json(), contacts))
     return jsonify({"contacts": json_contacts})
 
 
-@app.route("/create_contact", methods=["POST"])
+@app.route("/api/create_contact", methods=["POST"])
 def create_contact():
     first_name = request.json.get("firstName")
     last_name = request.json.get("lastName")
@@ -32,7 +32,7 @@ def create_contact():
     return jsonify({"message": "User created!"}), 201
 
 
-@app.route("/update_contact/<int:user_id>", methods=["PATCH"])
+@app.route("/api/update_contact/<int:user_id>", methods=["PATCH"])
 def update_contact(user_id):
     contact = Contact.query.get(user_id)
 
@@ -49,7 +49,7 @@ def update_contact(user_id):
     return jsonify({"message": "Usr updated."}), 200
 
 
-@app.route("/delete_contact/<int:user_id>", methods=["DELETE"])
+@app.route("/api/delete_contact/<int:user_id>", methods=["DELETE"])
 def delete_contact(user_id):
     contact = Contact.query.get(user_id)
 
